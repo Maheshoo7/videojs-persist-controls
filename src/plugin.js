@@ -13,7 +13,7 @@ const defaults = {};
  *
  * @function onPlayerReady
  * @param    {Player} player
- *           A Video.js player object.
+ *           A video.js player object.
  *
  * @param    {Object} [options={}]
  *           A plain object containing options for the plugin.
