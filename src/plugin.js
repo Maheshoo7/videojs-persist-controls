@@ -2,31 +2,7 @@ import videojs from 'video.js';
 import {version as VERSION} from '../package.json';
 
 // Default options for the plugin.
-const PLUGIN_CONFIG = {
-  key: 'persist-controls',
-  defaultOptions: {
-    muted: true,
-    volume: true,
-  },
-  persistOptions: ['volume', 'muted']
-};
-
-/**
- * Function to check if local storage is available
- *
- * @return {boolean} whether available
- */
-const checkLocalStorageAvailability = () => {
-  const testKey = 'persist-controls-test';
-
-  try {
-    window.localStorage.setItem(testKey, '.');
-    window.localStorage.removeItem(testKey);
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
+const defaults = {};
 
 /**
  * Function to invoke when the player is ready.
@@ -42,36 +18,8 @@ const checkLocalStorageAvailability = () => {
  * @param    {Object} [options={}]
  *           A plain object containing options for the plugin.
  */
-const onPlayerReady = (player, options, localStorage) => {
+const onPlayerReady = (player, options) => {
   player.addClass('vjs-persist-controls');
-
-  const { volume, muted } = options;
-  const { persistOptions, key } = PLUGIN_CONFIG;
-
-  const data = JSON.parse(localStorage.getItem(key)) || {};
-
-  persistOptions.forEach(option => {
-    if (!options[option]) return;
-
-    const value = data[option];
-
-    if (value) player[option](value);
-  });
-
-  if (muted || volume) {
-    player.on('volumechange', () => {
-      if (muted) {
-        const isMuted = player.muted()
-
-        player.defaultMuted(isMuted);
-        data.muted = isMuted;
-      }
-      if (volume) {
-        data.volume = player.volume();
-      }
-      localStorage.setItem(key, JSON.stringify(data));
-    });
-  }
 };
 
 /**
@@ -87,15 +35,8 @@ const onPlayerReady = (player, options, localStorage) => {
  *           An object of options left to the plugin author to define.
  */
 const persistControls = function(options) {
-  const isLocalStorageAvailable = checkLocalStorageAvailability()
-
-  if (!isLocalStorageAvailable) {
-    videojs.log('localStorage unavailable.');
-    return;
-  }
-
   this.ready(() => {
-    onPlayerReady(this, videojs.obj.merge(PLUGIN_CONFIG.defaultOptions, options), window.localStorage);
+    onPlayerReady(this, videojs.mergeOptions(defaults, options));
   });
 };
 
