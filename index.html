@@ -18,7 +18,9 @@
   <script src="dist/videojs-persist-controls.js"></script>
   <script>
     (function(window, videojs) {
-      var examplePlayer = window.examplePlayer = videojs('videojs-persist-controls-player');
+      var examplePlayer = window.examplePlayer = videojs('videojs-persist-controls-player', {
+        playbackRates: [0.5, 1, 1.25, 1.5, 2],
+      });
       var persistControls = window.persistControls = examplePlayer.persistControls();
     }(window, window.videojs));
   </script>

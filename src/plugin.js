@@ -7,8 +7,15 @@ const PLUGIN_CONFIG = {
   defaultOptions: {
     muted: true,
     volume: true,
+    playbackRate: true,
   },
-  persistOptions: ['volume', 'muted']
+  persistOptions: ['volume', 'muted', 'playbackRate']
+};
+
+// Player actions
+const PLAYER_ACTIONS = {
+  volumeChange: 'volumechange',
+  rateChange: 'ratechange',
 };
 
 /**
@@ -59,7 +66,7 @@ const onPlayerReady = (player, options, localStorage) => {
   });
 
   if (muted || volume) {
-    player.on('volumechange', () => {
+    player.on(PLAYER_ACTIONS.volumeChange, () => {
       if (muted) {
         const isMuted = player.muted()
 
