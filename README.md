@@ -61,7 +61,7 @@ require(['video.js', 'videojs-persist-controls'], function(videojs) {
 
 ## License
 
-MIT. Copyright (c) mahesh_g &lt;mahesh@revidd.com&gt;
+MIT. Copyright (c) Maheshoo7 &lt;gmahes00@gmail.com&gt;
 
 
 [videojs]: http://videojs.com/
