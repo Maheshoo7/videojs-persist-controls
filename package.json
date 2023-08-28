@@ -1,6 +1,6 @@
 {
   "name": "videojs-persist-controls",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "store previous control values to localstorage ",
   "main": "dist/videojs-persist-controls.cjs.js",
   "module": "dist/videojs-persist-controls.es.js",
@@ -37,7 +37,7 @@
     "videojs",
     "videojs-plugin"
   ],
-  "author": "mahesh_g <mahesh@revidd.com>",
+  "author": "Maheshoo7 <gmahes00@gmail.com>",
   "license": "MIT",
   "vjsstandard": {
     "ignore": [
