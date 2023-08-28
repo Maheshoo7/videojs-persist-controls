@@ -52,17 +52,25 @@ const checkLocalStorageAvailability = () => {
 const onPlayerReady = (player, options, localStorage) => {
   player.addClass('vjs-persist-controls');
 
-  const { volume, muted } = options;
+  const { volume, muted, playbackRate, captions } = options;
   const { persistOptions, key } = PLUGIN_CONFIG;
 
   const data = JSON.parse(localStorage.getItem(key)) || {};
+
+  const playerRates = player.playbackRates ? player.playbackRates() : player.options_.playbackRates || [];
 
   persistOptions.forEach(option => {
     if (!options[option]) return;
 
     const value = data[option];
 
-    if (value) player[option](value);
+    if (value) { 
+      if (option === 'playbackRate' && !playerRates.includes(value)) {
+        return;
+      }
+
+      player[option](value);
+    }
   });
 
   if (muted || volume) {
@@ -78,6 +86,17 @@ const onPlayerReady = (player, options, localStorage) => {
       }
       localStorage.setItem(key, JSON.stringify(data));
     });
+  }
+
+  if (playbackRate) {
+    player.on(PLAYER_ACTIONS.rateChange, () => {
+      const _playbackRate = player.playbackRate();
+
+      player.defaultPlaybackRate(_playbackRate);
+      data.playbackRate = _playbackRate;
+
+      localStorage.setItem(key, JSON.stringify(data));
+    })
   }
 };
 
