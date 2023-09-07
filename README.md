@@ -1,6 +1,13 @@
 # videojs-persist-controls
 
-store previous control values to localstorage 
+Save videojs controls value to local storage and retrive the previously stored values to the current session. 
+
+Currently, this plugin persists the following controls:
+- Mute
+- Volume
+- Playback rates
+
+More control options will be added soon.
 
 ## Table of Contents
 
