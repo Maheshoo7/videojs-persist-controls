@@ -8,14 +8,16 @@ const PLUGIN_CONFIG = {
     muted: true,
     volume: true,
     playbackRate: true,
+    captions: true,
   },
-  persistOptions: ['volume', 'muted', 'playbackRate']
+  persistOptions: ['volume', 'muted', 'playbackRate', 'captions']
 };
 
 // Player actions
 const PLAYER_ACTIONS = {
   volumeChange: 'volumechange',
   rateChange: 'ratechange',
+  textTrackChange: 'texttrackchange'
 };
 
 /**
@@ -69,6 +71,23 @@ const onPlayerReady = (player, options, localStorage) => {
         return;
       }
 
+      if (option === 'captions') {
+				const tracks = player.textTracks();
+
+        const defaultTrack = tracks.tracks_.find(track => track.default); 
+        const trackToShow = tracks.tracks_.find(track => track.language === value);
+
+        if (defaultTrack) {
+          defaultTrack.mode = 'showing';
+        } else if (trackToShow) {
+          trackToShow.mode = 'showing';
+        } else {
+          return;
+        }
+
+				return;
+			}
+
       player[option](value);
     }
   });
@@ -96,6 +115,22 @@ const onPlayerReady = (player, options, localStorage) => {
       data.playbackRate = _playbackRate;
 
       localStorage.setItem(key, JSON.stringify(data));
+    });
+  }
+
+  if (captions) {
+    player.on(PLAYER_ACTIONS.textTrackChange, () => {
+      const tracks = player.textTracks_.tracks_;
+
+      const selectedTrack = tracks.find(track => track.mode === 'showing');
+      
+      if (selectedTrack) {
+        data.captions = selectedTrack.language;
+        localStorage.setItem(key, JSON.stringify(data));
+      } else {
+        data.captions = "";
+        localStorage.setItem(key, JSON.stringify(data));
+      }
     })
   }
 };
