@@ -9,8 +9,9 @@ const PLUGIN_CONFIG = {
     volume: true,
     playbackRate: true,
     captions: true,
+    audioTrack: true
   },
-  persistOptions: ['volume', 'muted', 'playbackRate', 'captions']
+  persistOptions: ['volume', 'muted', 'playbackRate', 'captions', 'audioTrack']
 };
 
 // Player actions
@@ -54,7 +55,7 @@ const checkLocalStorageAvailability = () => {
 const onPlayerReady = (player, options, localStorage) => {
   player.addClass('vjs-persist-controls');
 
-  const { volume, muted, playbackRate, captions } = options;
+  const { volume, muted, playbackRate, captions, audioTrack } = options;
   const { persistOptions, key } = PLUGIN_CONFIG;
 
   const data = JSON.parse(localStorage.getItem(key)) || {};
@@ -87,6 +88,23 @@ const onPlayerReady = (player, options, localStorage) => {
 
 				return;
 			}
+
+      if (option === 'audioTrack') {
+        const audioTrackList = player.audioTracks();
+
+        const defaultTrack = audioTrackList.tracks_.find(track => track.enabled)
+        const trackToShow = audioTrackList.tracks_.find(track => track.language === value)
+        
+        if (defaultTrack && trackToShow) {
+          defaultTrack.enabled = false;
+        } 
+
+        if (trackToShow) {
+          trackToShow.enabled = true;
+        }
+
+        return;
+      }
 
       player[option](value);
     }
@@ -131,6 +149,17 @@ const onPlayerReady = (player, options, localStorage) => {
         data.captions = "";
         localStorage.setItem(key, JSON.stringify(data));
       }
+    })
+  }
+
+  if (audioTrack) {
+    const audioTrackList = player.audioTracks();
+
+    audioTrackList.addEventListener('change', function() {
+      const selectedTrack = audioTrackList.tracks_.find(track => track.enabled);
+
+      data.audioTrack = selectedTrack.language;
+      localStorage.setItem(key, JSON.stringify(data));
     })
   }
 };
