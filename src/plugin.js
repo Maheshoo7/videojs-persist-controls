@@ -51,6 +51,10 @@ const checkLocalStorageAvailability = () => {
  *
  * @param    {Object} [options={}]
  *           A plain object containing options for the plugin.
+ *
+ * @param {Storage} localStorage
+ *        The `localStorage` object that allows you to store key-value pairs
+ *        locally in a web browser.
  */
 const onPlayerReady = (player, options, localStorage) => {
   player.addClass('vjs-persist-controls');
@@ -63,19 +67,21 @@ const onPlayerReady = (player, options, localStorage) => {
   const playerRates = player.playbackRates ? player.playbackRates() : player.options_.playbackRates || [];
 
   persistOptions.forEach(option => {
-    if (!options[option]) return;
+    if (!options[option]) {
+      return;
+    }
 
     const value = data[option];
 
-    if (value) { 
+    if (value) {
       if (option === 'playbackRate' && !playerRates.includes(value)) {
         return;
       }
 
       if (option === 'captions') {
-				const tracks = player.textTracks();
+        const tracks = player.textTracks();
 
-        const defaultTrack = tracks.tracks_.find(track => track.default); 
+        const defaultTrack = tracks.tracks_.find(track => track.default);
         const trackToShow = tracks.tracks_.find(track => track.language === value);
 
         if (defaultTrack) {
@@ -86,18 +92,18 @@ const onPlayerReady = (player, options, localStorage) => {
           return;
         }
 
-				return;
-			}
+        return;
+      }
 
       if (option === 'audioTrack') {
         const audioTrackList = player.audioTracks();
 
-        const defaultTrack = audioTrackList.tracks_.find(track => track.enabled)
-        const trackToShow = audioTrackList.tracks_.find(track => track.language === value)
-        
+        const defaultTrack = audioTrackList.tracks_.find(track => track.enabled);
+        const trackToShow = audioTrackList.tracks_.find(track => track.language === value);
+
         if (defaultTrack && trackToShow) {
           defaultTrack.enabled = false;
-        } 
+        }
 
         if (trackToShow) {
           trackToShow.enabled = true;
@@ -113,7 +119,7 @@ const onPlayerReady = (player, options, localStorage) => {
   if (muted || volume) {
     player.on(PLAYER_ACTIONS.volumeChange, () => {
       if (muted) {
-        const isMuted = player.muted()
+        const isMuted = player.muted();
 
         player.defaultMuted(isMuted);
         data.muted = isMuted;
@@ -141,15 +147,15 @@ const onPlayerReady = (player, options, localStorage) => {
       const tracks = player.textTracks_.tracks_;
 
       const selectedTrack = tracks.find(track => track.mode === 'showing');
-      
+
       if (selectedTrack) {
         data.captions = selectedTrack.language;
         localStorage.setItem(key, JSON.stringify(data));
       } else {
-        data.captions = "";
+        data.captions = '';
         localStorage.setItem(key, JSON.stringify(data));
       }
-    })
+    });
   }
 
   if (audioTrack) {
@@ -160,7 +166,7 @@ const onPlayerReady = (player, options, localStorage) => {
 
       data.audioTrack = selectedTrack.language;
       localStorage.setItem(key, JSON.stringify(data));
-    })
+    });
   }
 };
 
@@ -177,7 +183,7 @@ const onPlayerReady = (player, options, localStorage) => {
  *           An object of options left to the plugin author to define.
  */
 const persistControls = function(options) {
-  const isLocalStorageAvailable = checkLocalStorageAvailability()
+  const isLocalStorageAvailable = checkLocalStorageAvailability();
 
   if (!isLocalStorageAvailable) {
     videojs.log('localStorage unavailable.');
