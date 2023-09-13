@@ -5,6 +5,10 @@
   "main": "dist/videojs-persist-controls.cjs.js",
   "module": "dist/videojs-persist-controls.es.js",
   "browser": "dist/videojs-persist-controls.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Maheshoo7/videojs-persist-controls"
+  },
   "generator-videojs-plugin": {
     "version": "9.0.0"
   },
