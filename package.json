@@ -1,6 +1,6 @@
 {
   "name": "videojs-persist-controls",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "Persist previous control values to localstorage",
   "main": "dist/videojs-persist-controls.cjs.js",
   "module": "dist/videojs-persist-controls.es.js",
