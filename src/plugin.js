@@ -56,7 +56,7 @@ const checkLocalStorageAvailability = () => {
  *        The `localStorage` object that allows you to store key-value pairs
  *        locally in a web browser.
  */
-const onPlayerReady = (player, options, localStorage) => {
+const onPlayerReady = (player, options, userId, localStorage) => {
   player.addClass('vjs-persist-controls');
 
   const { volume, muted, playbackRate, captions, audioTrack } = options;
@@ -69,6 +69,16 @@ const onPlayerReady = (player, options, localStorage) => {
   persistOptions.forEach(option => {
     if (!options[option]) {
       return;
+    }
+
+    if (userId) {
+      if (option === "volume") {
+        player[option](data[`${userId}_volume`]);
+        return;
+      } else if (option === "muted") {
+        player[option](data[`${userId}_muted`]);
+        return;
+      }
     }
 
     const value = data[option];
@@ -119,13 +129,15 @@ const onPlayerReady = (player, options, localStorage) => {
   if (muted || volume) {
     player.on(PLAYER_ACTIONS.volumeChange, () => {
       if (muted) {
+        const mutedKey = userId ? `${userId}_muted` : "muted";
         const isMuted = player.muted();
 
         player.defaultMuted(isMuted);
-        data.muted = isMuted;
+        data[mutedKey] = isMuted;
       }
       if (volume) {
-        data.volume = player.volume();
+        const volumeKey=userId?`${userId}_volume`:'volume';
+        data[volumeKey] = player.volume();
       }
       localStorage.setItem(key, JSON.stringify(data));
     });
@@ -181,8 +193,10 @@ const onPlayerReady = (player, options, localStorage) => {
  * @function persistControls
  * @param    {Object} [options={}]
  *           An object of options left to the plugin author to define.
+ * @param {string} userId
+ *                userId of the user.
  */
-const persistControls = function(options) {
+const persistControls = function(options, userId = null) {
   const isLocalStorageAvailable = checkLocalStorageAvailability();
 
   if (!isLocalStorageAvailable) {
@@ -191,7 +205,7 @@ const persistControls = function(options) {
   }
 
   this.ready(() => {
-    onPlayerReady(this, videojs.obj.merge(PLUGIN_CONFIG.defaultOptions, options), window.localStorage);
+    onPlayerReady(this, videojs.obj.merge(PLUGIN_CONFIG.defaultOptions, options), userId, window.localStorage);
   });
 };
 
